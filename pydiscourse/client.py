@@ -103,17 +103,12 @@ class DiscourseClient(object):
             ????
 
         """
-        r = self._get("/users/hp.json")
-        challenge = r["challenge"][::-1]  # reverse challenge, discourse security check
-        confirmations = r["value"]
         return self._post(
             "/users",
             name=name,
             username=username,
             email=email,
             password=password,
-            password_confirmation=confirmations,
-            challenge=challenge,
             **kwargs
         )
 
@@ -901,7 +896,7 @@ class DiscourseClient(object):
         """
         Get all infos of a group by group name
         """
-        return self._get("/groups/{0}/members.json".format(group_name))
+        return self._get("/groups/{0}.json".format(group_name))
 
     def create_group(
         self,
@@ -1056,7 +1051,7 @@ class DiscourseClient(object):
             "/admin/groups/{0}/members.json".format(groupid), usernames=usernames
         )
 
-    def add_user_to_group(self, groupid, userid):
+    def add_user_to_group(self, groupid, username):
         """
         Add a member to a group by with user id.
 
@@ -1071,7 +1066,7 @@ class DiscourseClient(object):
             DiscourseError if user is already member of group
 
         """
-        return self._post("/admin/users/{0}/groups".format(userid), group_id=groupid)
+        return self._put("/groups/{0}/members.json".format(groupid), usernames=username)
 
     def delete_group_member(self, groupid, userid):
         """
